@@ -1,5 +1,8 @@
 package com.rxy.learning.roatelinegame;
 
+import java.util.ArrayList;
+
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -25,8 +28,8 @@ public class RoateLineView extends View {
 
 	// 测试数据
 
-	private volatile int TouchX = 150;
-	private volatile int TouchY = 220;
+	private volatile int TouchX = -150;
+	private volatile int TouchY = -220;
 	private boolean isTouched = false;
 	private int secAngle;
 	private int SEC_LENGTH_OF_LINE;
@@ -34,7 +37,10 @@ public class RoateLineView extends View {
 	
 	//分数相关
 	private int score = 0;
-	
+	//碰撞效果相关
+	private static final String[] colors = { "#33B5E5", "#0099CC", "#AA66CC",
+		"#9933CC", "#99CC00", "#669900", "#FFBB33", "#FF8800", "#FF4444",
+		"#CC0000" };
 	private RoateThread mRoateThread = null;
 
 	public RoateLineView(Context context) {
@@ -51,6 +57,8 @@ public class RoateLineView extends View {
 	}
 
 	private void init() {
+		
+		balls = new ArrayList<RoateLineView.Ball>();
 		mRoateThread = new RoateThread();
 		mRoateThread.start();
 	}
@@ -74,6 +82,16 @@ public class RoateLineView extends View {
 
 		if (hasTarget)
 			drawTarget(canvas, paint);
+		
+		//碰撞产生的小球
+		drawBalls(canvas, paint);
+	}
+
+	private void drawBalls(Canvas canvas, Paint paint) {
+		for (int i = 0; i < balls.size(); i++) {
+			paint.setColor(balls.get(i).color);
+			canvas.drawCircle(balls.get(i).x, balls.get(i).y, (float) (RADUIS_OF_SHADOW *2.0 /3), paint);
+		}
 	}
 
 	private Typeface mTypeface = Typeface.createFromAsset(getContext().getAssets(), "fonts/MFYueHei_Noncommercial-Regular.otf");
@@ -93,7 +111,7 @@ public class RoateLineView extends View {
 						* Math.cos(Math.toRadians(targetAngle))),
 				(float) (CENTER_Y + targetLength
 						* Math.sin(Math.toRadians(targetLength))),
-				(float) (2 * RADUIS_OF_SHADOW), paint);
+				(float) (3 * RADUIS_OF_SHADOW), paint);
 	}
 
 	// ///////////////////////////////
@@ -116,7 +134,7 @@ public class RoateLineView extends View {
 
 	private void drawTouch(Canvas canvas, Paint paint) {
 		paint.setColor(Color.BLUE);
-		canvas.drawCircle(TouchX, TouchY, 15, paint);
+		canvas.drawCircle(TouchX, TouchY, 2*RADUIS_OF_SHADOW, paint);
 	}// ///////////////////
 
 	private void drawShadow(Canvas canvas, Paint paint) {
@@ -135,6 +153,7 @@ public class RoateLineView extends View {
 						* Math.cos(Math.toRadians(curAngle2))),
 				(float) (CENTER_Y + LENGTH_OF_LINE
 						* Math.sin(Math.toRadians(curAngle2))), paint);
+		if(!isTouched)
 		canvas.drawCircle(
 				(float) (CENTER_X + LENGTH_OF_LINE
 						* Math.cos(Math.toRadians(curAngle2))),
@@ -159,6 +178,8 @@ public class RoateLineView extends View {
 
 		curAngle = 0;
 
+		getTargetLocation();
+		
 		isMeasureOver = true;
 		// Log.i(tag, "width height x y length "+
 		// WINDOW_WIDTH+" "+WINDOW_HEIGHT+" "+CENTER_X+" "+CENTER_Y+" "+LENGTH_OF_LINE);
@@ -176,6 +197,7 @@ public class RoateLineView extends View {
 	private boolean isMeasureOver = false;
 
 	private class RoateThread extends Thread {
+		private int count = 0;
 		@Override
 		public void run() {
 			while (true) {
@@ -194,6 +216,8 @@ public class RoateLineView extends View {
 							/*
 							 * 生成碰撞效果
 							 */
+							
+							addBalls();
 							hasTarget = false;
 							
 							getTargetLocation();
@@ -204,8 +228,8 @@ public class RoateLineView extends View {
 						}
 						if (secAngle == curAngle) {
 							isTouched = false;
-							TouchX = 150;
-							TouchY = 150;
+							TouchX = -150;
+							TouchY = -150;
 							LENGTH_OF_LINE = tmp;
 						}
 					} else {
@@ -222,10 +246,14 @@ public class RoateLineView extends View {
 				} else {
 					curAngle = (curAngle + 1) % 360;
 				}
-
+				if(count == 30){
+					updateBallPosition();
+				    count = 0;
+				}
 				postInvalidate();
 				try {
 					sleep(INTERVAL);
+					count++;
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -233,6 +261,17 @@ public class RoateLineView extends View {
 		}
 	}
 
+	// 模拟自由上抛运动的小球 ，数据集合
+		private class Ball {
+			float x;// x坐标
+			float y;// y坐标
+			int vx;// x方向速度
+			int vy;// y方向速度
+			int g;// 下落加速度 g
+			int color;// 小球的填充色
+		}
+	
+	private ArrayList<Ball> balls;
 	private int tmp;
 
 	/*
@@ -279,10 +318,55 @@ public class RoateLineView extends View {
 		return false;
 	}
 
+	private static final float u = 0.5f;
+	public void updateBallPosition() {
+		for (int i = 0; i < balls.size(); i++) {
+			balls.get(i).x += balls.get(i).vx;
+			balls.get(i).y += balls.get(i).vy;
+			balls.get(i).vy += balls.get(i).g;
+			if (balls.get(i).y >= WINDOW_HEIGHT - RADUIS_OF_SHADOW *2.0/3) {
+				balls.get(i).y = (float) (WINDOW_HEIGHT - RADUIS_OF_SHADOW *2.0/3);
+				balls.get(i).vy = (int) (-balls.get(i).vy * u);
+			}
+		}
+
+		// 性能优化
+		int count = 0;
+		for (int i = 0; i < balls.size(); i++) {
+			if (balls.get(i).x + RADUIS_OF_SHADOW *2.0/3 > 0
+					&& balls.get(i).x - RADUIS_OF_SHADOW *2.0/3 < WINDOW_WIDTH) {
+				balls.set(count++, balls.get(i));
+			}
+		}
+		for (int j = count; j < balls.size(); j++) {
+			balls.remove(j);
+		}
+		// 具体ArrayList大小与特定绘图区域大小相关
+		// Log.i(tag, balls.size()+"");
+	}
+
+	public void addBalls() {
+		float x = (float) (CENTER_X + targetLength
+				* Math.cos(Math.toRadians(targetAngle)));
+		float y = (float) (CENTER_Y + targetLength
+				* Math.sin(Math.toRadians(targetLength))); 
+		for(int i = 0 ;i<3;i++){
+			Ball tmp = new Ball();
+			tmp.x = x;
+			tmp.y = y;
+			tmp.g = (int) (1.5 + Math.random());
+			tmp.vx = Math.random() > 0.5 ? -4 : 4;
+			tmp.vy = -5;
+			tmp.color = Color
+					.parseColor(colors[(int) (Math.random() * 10)]);
+			balls.add(tmp);
+		}
+	}
+
 	public boolean hasCollisionAndWin() {
 
-		int vDistance = (int) (targetLength * Math.sin(Math.toRadians(secAngle
-				- targetAngle)));
+//		double vDistance =  (targetLength * Math.sin(Math.toRadians(targetAngle
+//				- secAngle)));
 		float x1 = (float) (TouchX + SEC_LENGTH_OF_LINE
 				* Math.cos(Math.toRadians(secAngle)));
 		float y1 = (float) (TouchY + SEC_LENGTH_OF_LINE
@@ -292,10 +376,9 @@ public class RoateLineView extends View {
 		float y2 = (float) (CENTER_Y + targetLength
 				* Math.sin(Math.toRadians(targetLength)));
 
-		int cDistance = (int) Math.sqrt(Math.pow(x1 - x2, 2)
+		double cDistance =  Math.sqrt(Math.pow(x1 - x2, 2)
 				+ Math.pow(y1 - y2, 2));
-		if (vDistance <= 2 * RADUIS_OF_SHADOW
-				&& cDistance <= 3 * RADUIS_OF_SHADOW) {
+		if ( cDistance <= 4 * RADUIS_OF_SHADOW) {
 
 			return true;
 		}

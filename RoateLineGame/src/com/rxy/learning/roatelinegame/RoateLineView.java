@@ -41,6 +41,9 @@ public class RoateLineView extends View {
 	private static final String[] colors = { "#33B5E5", "#0099CC", "#AA66CC",
 		"#9933CC", "#99CC00", "#669900", "#FFBB33", "#FF8800", "#FF4444",
 		"#CC0000" };
+	
+	//游戏结束相关
+	private int deadCount = 0;
 	private RoateThread mRoateThread = null;
 
 	public RoateLineView(Context context) {
@@ -105,7 +108,7 @@ public class RoateLineView extends View {
 	}
 
 	private void drawTarget(Canvas canvas, Paint paint) {
-		paint.setColor(Color.MAGENTA);
+		paint.setColor(Color.parseColor("#9AFF02"));
 		canvas.drawCircle(
 				(float) (CENTER_X + targetLength
 						* Math.cos(Math.toRadians(targetAngle))),
@@ -196,11 +199,13 @@ public class RoateLineView extends View {
 
 	private boolean isMeasureOver = false;
 
+	private boolean isOn = true;
 	private class RoateThread extends Thread {
 		private int count = 0;
+		private boolean onlyonce = true;
 		@Override
 		public void run() {
-			while (true) {
+			while (isOn) {
 				while (!isMeasureOver) {
 				}
 
@@ -211,26 +216,43 @@ public class RoateLineView extends View {
 						/*
 						 * 碰撞检测
 						 */
-						if (hasCollisionAndWin()) {
-							Log.i("碰撞", "成功");
+						if (onlyonce && hasCollisionAndWin()) {
+							
+		Log.i("碰撞", "成功");
 							/*
 							 * 生成碰撞效果
 							 */
 							
-							addBalls();
 							hasTarget = false;
 							
-							getTargetLocation();
 							
 //							secAngle = curAngle;
 							
 							score += 5;
+							
+							onlyonce = false;
+							
+							addBalls();
 						}
 						if (secAngle == curAngle) {
 							isTouched = false;
 							TouchX = -150;
 							TouchY = -150;
 							LENGTH_OF_LINE = tmp;
+							
+							if(hasTarget){
+								if(++deadCount >= 3){
+									
+									Log.i("dead", "挂了");
+									if(mOnRoateListener != null){
+										mOnRoateListener.OnDeadListener();
+									}
+									isOn = false;
+								}
+							}
+							
+							getTargetLocation();
+							onlyonce = true;
 						}
 					} else {
 						secAngle = curAngle;
@@ -270,7 +292,15 @@ public class RoateLineView extends View {
 			int g;// 下落加速度 g
 			int color;// 小球的填充色
 		}
-	
+		private OnRoateListener mOnRoateListener  = null;
+		public void setOnRoateListener(OnRoateListener mOnRoateListener) {
+			this.mOnRoateListener = mOnRoateListener;
+		}
+	//自定义回调接口
+		public interface OnRoateListener{
+			public abstract void OnDeadListener();
+			public abstract void OnStartListener();
+		}
 	private ArrayList<Ball> balls;
 	private int tmp;
 
@@ -349,8 +379,9 @@ public class RoateLineView extends View {
 		float x = (float) (CENTER_X + targetLength
 				* Math.cos(Math.toRadians(targetAngle)));
 		float y = (float) (CENTER_Y + targetLength
-				* Math.sin(Math.toRadians(targetLength))); 
-		for(int i = 0 ;i<3;i++){
+				* Math.sin(Math.toRadians(targetLength)));
+		int count = (int) (3 + Math.random()* 5); 
+		for(int i = 0 ;i<count;i++){
 			Ball tmp = new Ball();
 			tmp.x = x;
 			tmp.y = y;
@@ -393,7 +424,7 @@ public class RoateLineView extends View {
 	private void getTargetLocation() {
 		targetAngle = (int) (Math.random() * 360);
 		targetLength = (int) (LENGTH_OF_LINE * 1.0 / 10 + Math.random()
-				* (LENGTH_OF_LINE * 9.0 / 10));
+				* (LENGTH_OF_LINE * 8.0 / 10));
 		hasTarget = true;
 	}
 }

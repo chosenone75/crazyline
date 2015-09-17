@@ -93,7 +93,7 @@ public class RoateLineView extends View {
 	private void drawBalls(Canvas canvas, Paint paint) {
 		for (int i = 0; i < balls.size(); i++) {
 			paint.setColor(balls.get(i).color);
-			canvas.drawCircle(balls.get(i).x, balls.get(i).y, (float) (RADUIS_OF_SHADOW *2.0 /3), paint);
+			canvas.drawCircle(balls.get(i).x, balls.get(i).y, (float) (RADUIS_OF_SHADOW *2.0 / 2.5), paint);
 		}
 	}
 
@@ -113,7 +113,7 @@ public class RoateLineView extends View {
 				(float) (CENTER_X + targetLength
 						* Math.cos(Math.toRadians(targetAngle))),
 				(float) (CENTER_Y + targetLength
-						* Math.sin(Math.toRadians(targetLength))),
+						* Math.sin(Math.toRadians(targetAngle))),
 				(float) (3 * RADUIS_OF_SHADOW), paint);
 	}
 
@@ -200,6 +200,19 @@ public class RoateLineView extends View {
 	private boolean isMeasureOver = false;
 
 	private boolean isOn = true;
+	
+	public void restart(){
+		score = 0;
+		curAngle = 0;
+		deadCount = 0;
+		isTouched = false;
+	    balls.clear();
+	    isOn = true;
+	    
+		mRoateThread = null;
+		mRoateThread = new RoateThread();
+		mRoateThread.start();
+	}
 	private class RoateThread extends Thread {
 		private int count = 0;
 		private boolean onlyonce = true;
@@ -260,7 +273,7 @@ public class RoateLineView extends View {
 
 						//
 						if(!hasTarget)
-						getTargetLocation();
+						 getTargetLocation();
 						//
 
 					}
@@ -379,8 +392,8 @@ public class RoateLineView extends View {
 		float x = (float) (CENTER_X + targetLength
 				* Math.cos(Math.toRadians(targetAngle)));
 		float y = (float) (CENTER_Y + targetLength
-				* Math.sin(Math.toRadians(targetLength)));
-		int count = (int) (3 + Math.random()* 5); 
+				* Math.sin(Math.toRadians(targetAngle)));
+		int count = (int) (4 + Math.random()* 4); 
 		for(int i = 0 ;i<count;i++){
 			Ball tmp = new Ball();
 			tmp.x = x;
@@ -405,7 +418,7 @@ public class RoateLineView extends View {
 		float x2 = (float) (CENTER_X + targetLength
 				* Math.cos(Math.toRadians(targetAngle)));
 		float y2 = (float) (CENTER_Y + targetLength
-				* Math.sin(Math.toRadians(targetLength)));
+				* Math.sin(Math.toRadians(targetAngle)));
 
 		double cDistance =  Math.sqrt(Math.pow(x1 - x2, 2)
 				+ Math.pow(y1 - y2, 2));
@@ -423,8 +436,8 @@ public class RoateLineView extends View {
 
 	private void getTargetLocation() {
 		targetAngle = (int) (Math.random() * 360);
-		targetLength = (int) (LENGTH_OF_LINE * 1.0 / 10 + Math.random()
-				* (LENGTH_OF_LINE * 8.0 / 10));
+		targetLength = (int) (LENGTH_OF_LINE * 0.2 + Math.random()
+				* (LENGTH_OF_LINE *0.7));
 		hasTarget = true;
 	}
 }

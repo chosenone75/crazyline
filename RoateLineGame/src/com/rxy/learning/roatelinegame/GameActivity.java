@@ -8,18 +8,20 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.Window;
 import android.widget.Toast;
 
-public class MainActivity extends Activity {
+public class GameActivity extends Activity {
 
 	private RoateLineView mRoateLineView = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_game);
+		
 		initView();
 	}
 	private void initView() {
@@ -53,14 +55,22 @@ public class MainActivity extends Activity {
         builder.setNegativeButton("退出",  
                 new DialogInterface.OnClickListener() {  
                     public void onClick(DialogInterface dialog, int whichButton) {  
-                    	MainActivity.this.finish();
+                    	GameActivity.this.finish();
                         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                    	System.exit(0);                      
                     	System.out.println("exit");
                     }  
                 });  
         builder.show();  
     }  
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (event.getAction() == KeyEvent.ACTION_DOWN
+				&& keyCode == KeyEvent.KEYCODE_BACK) {
+			this.finish();
+			overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+		}
+		return true;
+	}
 	private Handler handler = new Handler(){
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
@@ -68,7 +78,7 @@ public class MainActivity extends Activity {
 				Toast.makeText(getApplicationContext(), "你输了", Toast.LENGTH_SHORT).show();
 				//此处弹出对话框
 				
-				showDialog(MainActivity.this);
+				showDialog(GameActivity.this);
 				break;
 
 			default:

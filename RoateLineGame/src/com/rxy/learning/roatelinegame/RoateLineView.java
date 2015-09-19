@@ -24,8 +24,8 @@ public class RoateLineView extends View {
 	private int LENGTH_OF_LINE;
 	private static final int RADUIS_OF_SHADOW = 5;
 	private int curAngle;
-	private int INTERVAL = 2;
-
+	private int INTERVAL = 1;
+    private int COUNT_RADUIS_SHADOW = 1;
 	// ≤‚ ‘ ˝æ›
 
 	private volatile int TouchX = -150;
@@ -63,9 +63,11 @@ public class RoateLineView extends View {
 		
 		balls = new ArrayList<RoateLineView.Ball>();
 		mRoateThread = new RoateThread();
-		mRoateThread.start();
 	}
 
+	public void Start(){
+		mRoateThread.start();
+	}
 	@SuppressLint("DrawAllocation")
 	@Override
 	protected void onDraw(Canvas canvas) {
@@ -108,13 +110,13 @@ public class RoateLineView extends View {
 	}
 
 	private void drawTarget(Canvas canvas, Paint paint) {
-		paint.setColor(Color.parseColor("#9AFF02"));
+		paint.setColor(Color.parseColor("#8B4500"));
 		canvas.drawCircle(
 				(float) (CENTER_X + targetLength
 						* Math.cos(Math.toRadians(targetAngle))),
 				(float) (CENTER_Y + targetLength
 						* Math.sin(Math.toRadians(targetAngle))),
-				(float) (3 * RADUIS_OF_SHADOW), paint);
+				(float) (COUNT_RADUIS_SHADOW * RADUIS_OF_SHADOW), paint);
 	}
 
 	// ///////////////////////////////
@@ -149,6 +151,8 @@ public class RoateLineView extends View {
 	private void drawLine(int curAngle2, Canvas canvas, Paint paint) {
 		// Log.i(tag, "OnDraw");
 		paint.setColor(Color.parseColor("#000000"));
+		paint.setAntiAlias(true);
+		paint.setStrokeWidth(2.0f);
 		canvas.drawLine(
 				CENTER_X,
 				CENTER_Y,
@@ -288,7 +292,7 @@ public class RoateLineView extends View {
 				postInvalidate();
 				try {
 					sleep(INTERVAL);
-					count++;
+					count+=INTERVAL;
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -407,6 +411,16 @@ public class RoateLineView extends View {
 		}
 	}
 
+	public int getScore() {
+		return score;
+	}
+	public void setINTERVAL(int iNTERVAL) {
+		INTERVAL = iNTERVAL;
+	}
+	public void setCOUNT_RADUIS_SHADOW(int cOUNT_RADUIS_SHADOW) {
+		COUNT_RADUIS_SHADOW = cOUNT_RADUIS_SHADOW;
+	}
+
 	public boolean hasCollisionAndWin() {
 
 //		double vDistance =  (targetLength * Math.sin(Math.toRadians(targetAngle
@@ -422,7 +436,7 @@ public class RoateLineView extends View {
 
 		double cDistance =  Math.sqrt(Math.pow(x1 - x2, 2)
 				+ Math.pow(y1 - y2, 2));
-		if ( cDistance <= 4 * RADUIS_OF_SHADOW) {
+		if ( cDistance <= (COUNT_RADUIS_SHADOW+1) * RADUIS_OF_SHADOW) {
 
 			return true;
 		}

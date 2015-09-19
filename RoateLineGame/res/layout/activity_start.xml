@@ -2,49 +2,57 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" 
-    android:background="#FFFFCE">
+    android:background="#FFFFCE"
+    android:orientation="vertical" >
 
-    <LinearLayout
+  <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="#FFFFAA"
         android:gravity="center"
         android:orientation="horizontal"
-         >
+        android:layout_margin="10dp">
 
         <TextView
             android:id="@+id/tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="20dp"
             android:text="疯狂的绳子"
-            android:textSize="30sp"
-            android:layout_margin="20dp" />
-    </LinearLayout>
+            android:textSize="30sp" />
+    </LinearLayout> 
 
+    <LinearLayout
+         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.5"
+        android:orientation="vertical" >
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
-        android:layout_marginBottom="80dp"
-         >
+        android:layout_weight="4.0" >
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1.0" 
-            android:gravity="center"
-            >
+            android:layout_weight="1.0"
+            android:gravity="center" >
 
             <Button
                 android:id="@+id/dif_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="关卡1"
-                android:background="@drawable/tv_bg" 
-                android:gravity="center"/>
+                android:background="@drawable/tv_bg"
+                android:gravity="center"
+                android:text="关卡1" />
         </LinearLayout>
 
         <LinearLayout
@@ -57,9 +65,9 @@
                 android:id="@+id/dif_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="关卡2"
+                android:background="@drawable/tv_bg"
                 android:gravity="center"
-                android:background="@drawable/tv_bg" />
+                android:text="关卡2" />
         </LinearLayout>
 
         <LinearLayout
@@ -72,11 +80,12 @@
                 android:id="@+id/dif_3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="关卡3"
+                android:background="@drawable/tv_bg"
                 android:gravity="center"
-                android:background="@drawable/tv_bg" />
+                android:text="关卡3" />
         </LinearLayout>
-         <LinearLayout
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
@@ -86,12 +95,12 @@
                 android:id="@+id/voice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="音效(On)"
-                android:gravity="center"
                 android:background="@drawable/tv_bg"
-                 />
+                android:gravity="center"
+                android:text="音效(On)" />
         </LinearLayout>
-         <LinearLayout
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
@@ -101,10 +110,17 @@
                 android:id="@+id/setting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="设置"
+                android:background="@drawable/tv_bg"
                 android:gravity="center"
-                android:background="@drawable/tv_bg" />
+                android:text="设置" />
         </LinearLayout>
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.5"
+        android:orientation="vertical" >
+    </LinearLayout>
+</LinearLayout>
 </LinearLayout>

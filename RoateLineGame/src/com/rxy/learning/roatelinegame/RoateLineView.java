@@ -414,11 +414,9 @@ public class RoateLineView extends View {
 	public int getScore() {
 		return score;
 	}
-	public void setINTERVAL(int iNTERVAL) {
-		INTERVAL = iNTERVAL;
-	}
-	public void setCOUNT_RADUIS_SHADOW(int cOUNT_RADUIS_SHADOW) {
-		COUNT_RADUIS_SHADOW = cOUNT_RADUIS_SHADOW;
+	public void setDif(int dif) {
+		INTERVAL = dif;
+		COUNT_RADUIS_SHADOW = dif;
 	}
 
 	public boolean hasCollisionAndWin() {

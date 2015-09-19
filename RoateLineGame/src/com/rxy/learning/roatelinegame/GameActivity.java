@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.Window;
@@ -16,17 +17,22 @@ import android.widget.Toast;
 public class GameActivity extends Activity {
 
 	private RoateLineView mRoateLineView = null;
+	private double dif = 0;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_game);
-		
+		Intent inent = getIntent();
+		dif = inent.getDoubleExtra("dif",3.0);
 		initView();
 	}
 	private void initView() {
 
 		mRoateLineView = (RoateLineView) findViewById(R.id.roateview);
+		mRoateLineView.setDif((int) dif);
+		mRoateLineView.Start();
+		
 		mRoateLineView.setOnRoateListener(new OnRoateListener() {
 			
 			@Override
@@ -45,7 +51,7 @@ public class GameActivity extends Activity {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);  
         builder.setIcon(R.drawable.ic_launcher);  
         builder.setTitle("AlterDialog");  
-        builder.setMessage("            你挂啦");  
+        builder.setMessage("                     逗比，你挂啦");  
         builder.setPositiveButton("重新开始",  
                 new DialogInterface.OnClickListener() {  
                     public void onClick(DialogInterface dialog, int whichButton) {  

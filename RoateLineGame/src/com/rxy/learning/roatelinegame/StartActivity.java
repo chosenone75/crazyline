@@ -1,12 +1,17 @@
 package com.rxy.learning.roatelinegame;
 
+
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class StartActivity extends Activity {
 	private TextView dif1textView = null;
@@ -31,7 +36,7 @@ public class StartActivity extends Activity {
 			public void onClick(View arg0) {
 				Intent intent = new Intent(StartActivity.this,
 						GameActivity.class);
-				intent.putExtra("dif", 1.0);
+				intent.putExtra("dif", 3.0);
 				startActivity(intent);
 				overridePendingTransition(android.R.anim.fade_in,
 						android.R.anim.fade_out);
@@ -55,7 +60,7 @@ public class StartActivity extends Activity {
 			public void onClick(View arg0) {
 				Intent intent = new Intent(StartActivity.this,
 						GameActivity.class);
-				intent.putExtra("dif", 3.0);
+				intent.putExtra("dif", 1.0);
 				startActivity(intent);
 				overridePendingTransition(android.R.anim.fade_in,
 						android.R.anim.fade_out);
@@ -88,4 +93,24 @@ public class StartActivity extends Activity {
 			}
 		});
 	}
+	private long exitTime = 0;
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (event.getAction() == KeyEvent.ACTION_DOWN
+				&& keyCode == KeyEvent.KEYCODE_BACK) {
+			if (System.currentTimeMillis() - exitTime > 2000) {
+				Toast.makeText(StartActivity.this, "再按一次退出",
+						Toast.LENGTH_SHORT).show();
+				exitTime = System.currentTimeMillis();
+			} else {
+				finish();
+				overridePendingTransition(android.R.anim.fade_in,
+						android.R.anim.fade_out);
+				System.exit(0);
+			}
+		}
+		return true;
+	}
+
 }

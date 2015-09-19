@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="#FFF8DC" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,10 +27,11 @@
             android:orientation="vertical" >
 
             <TextView
-                android:id="@+id/top_tv"
+                android:id="@+id/clear_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="清空所有数据" />
+                android:text="清空所有数据" 
+                android:textSize="30sp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -40,10 +42,11 @@
             android:orientation="vertical" >
 
             <TextView
-                android:id="@+id/title_tv"
+                android:id="@+id/about_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="关于" />
+                android:text="关于"
+                android:textSize="30sp" />
         </LinearLayout>
     </LinearLayout>
 

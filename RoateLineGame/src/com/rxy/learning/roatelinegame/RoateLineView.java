@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -34,9 +36,11 @@ public class RoateLineView extends View {
 	private int secAngle;
 	private int SEC_LENGTH_OF_LINE;
 
-	
+	private SharedPreferences sharedPreferences = null;
+	private Editor editor = null;
 	//分数相关
 	private int score = 0;
+	private int record = 0;
 	//碰撞效果相关
 	private static final String[] colors = { "#33B5E5", "#0099CC", "#AA66CC",
 		"#9933CC", "#99CC00", "#669900", "#FFBB33", "#FF8800", "#FF4444",
@@ -56,15 +60,19 @@ public class RoateLineView extends View {
 
 	public RoateLineView(Context context, AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
-		init();
+		init(context);
 	}
 
-	private void init() {
+	private void init(Context context) {
 		
 		balls = new ArrayList<RoateLineView.Ball>();
+        sharedPreferences = context.getSharedPreferences("scores",Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        record = sharedPreferences.getInt("dif"+COUNT_RADUIS_SHADOW, 0);
 		mRoateThread = new RoateThread();
 	}
 
+	
 	public void Start(){
 		mRoateThread.start();
 	}
@@ -106,7 +114,7 @@ public class RoateLineView extends View {
 		paint.setTypeface(mTypeface);
 		paint.setTextSize((float) (WINDOW_WIDTH*1.0/12));
 		canvas.drawText("得分:"+score, WINDOW_WIDTH/10, WINDOW_HEIGHT/10, paint);
-		
+		canvas.drawText("记录:"+record, WINDOW_WIDTH*7/10, WINDOW_HEIGHT/10, paint);
 	}
 
 	private void drawTarget(Canvas canvas, Paint paint) {
@@ -244,8 +252,11 @@ public class RoateLineView extends View {
 							
 							
 //							secAngle = curAngle;
-							
+							//更新分数
 							score += 5;
+							
+							if(score >=record)
+								record = score;
 							
 							onlyonce = false;
 							
@@ -265,6 +276,9 @@ public class RoateLineView extends View {
 										mOnRoateListener.OnDeadListener();
 									}
 									isOn = false;
+									
+									editor.putInt("dif"+COUNT_RADUIS_SHADOW, record);
+									editor.commit();
 								}
 							}
 							
@@ -417,6 +431,8 @@ public class RoateLineView extends View {
 	public void setDif(int dif) {
 		INTERVAL = dif;
 		COUNT_RADUIS_SHADOW = dif;
+		
+		 record = sharedPreferences.getInt("dif"+dif, 0);
 	}
 
 	public boolean hasCollisionAndWin() {
@@ -451,5 +467,11 @@ public class RoateLineView extends View {
 		targetLength = (int) (LENGTH_OF_LINE * 0.2 + Math.random()
 				* (LENGTH_OF_LINE *0.7));
 		hasTarget = true;
+	}
+	@Override
+	protected void onDetachedFromWindow() {
+		editor.putInt("dif"+COUNT_RADUIS_SHADOW, record);
+		editor.commit();
+		super.onDetachedFromWindow();
 	}
 }

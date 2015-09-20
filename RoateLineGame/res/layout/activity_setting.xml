@@ -31,9 +31,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="清空所有数据" 
-                android:textSize="30sp"/>
+                android:textSize="30sp"
+                android:gravity="center"
+                android:background="@drawable/tv_bg"/>
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/feedback_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="反馈意见" 
+                android:textSize="30sp"
+                android:gravity="center"
+                android:background="@drawable/tv_bg"/>
+        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -46,7 +64,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="关于"
-                android:textSize="30sp" />
+                android:textSize="30sp"
+                android:gravity="center"
+                android:background="@drawable/tv_bg" />
         </LinearLayout>
     </LinearLayout>
 
